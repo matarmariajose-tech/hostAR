@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
-
+import './globals.css';
 import Cursor from "../components/Cursor";
-import WhatsAppButton from "../components/WhatsAppButton";
 import ChatbotModal from "../components/ChatbotModal";
 import LeadPopup from "../components/LeadPopup";
 
@@ -23,7 +22,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <LeadPopup />
         <ChatbotModal />
         <Cursor />
-        <WhatsAppButton />
       </body>
     </html>
   );

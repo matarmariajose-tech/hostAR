@@ -1,9 +1,9 @@
-/* Import Tailwind CSS directives */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Variables de Color ===== */
 :root {
   --primary: #FDFAF7;
   --secondary: #F8F4F0;
@@ -35,7 +35,12 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== Cursor Personalizado ===== */
+.gradient-text {
+  background: linear-gradient(135deg, #74ACDF 0%, #AED6F1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .cursor {
   position: fixed;
   width: 12px;
@@ -55,7 +60,6 @@ body {
   border: 2px solid var(--accent);
 }
 
-/* ===== Navigation ===== */
 nav {
   position: fixed;
   top: 0;
@@ -135,7 +139,6 @@ nav.scrolled {
   cursor: pointer;
 }
 
-/* ===== Hero ===== */
 .hero {
   min-height: 100vh;
   display: flex;
@@ -499,7 +502,6 @@ nav.scrolled {
   left: 0;
 }
 
-/* ===== Testimonials ===== */
 .testimonials-section {
   background: var(--primary);
 }
@@ -554,7 +556,6 @@ nav.scrolled {
   }
 }
 
-/* ===== Chatbot Modal ===== */
 #chatbot-modal {
   position: fixed;
   bottom: 100px;
@@ -610,7 +611,6 @@ nav.scrolled {
   cursor: pointer;
 }
 
-/* ===== Lead Popup ===== */
 #lead-popup {
   position: fixed;
   top: 0;
@@ -667,7 +667,6 @@ nav.scrolled {
   box-shadow: 0 8px 20px rgba(116, 172, 223, 0.3);
 }
 
-/* ===== WhatsApp Button ===== */
 .whatsapp-btn {
   position: fixed;
   bottom: 20px;
@@ -695,7 +694,6 @@ nav.scrolled {
   height: 20px;
 }
 
-/* ===== Footer ===== */
 footer {
   background: var(--text);
   color: white;
@@ -778,7 +776,6 @@ footer {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* ===== Responsive Design ===== */
 @media (max-width: 1024px) {
   .hero-content {
     flex-direction: column;
@@ -838,5 +835,83 @@ footer {
 
   .testimonial-card {
     flex: 0 0 100%;
+  }
+
+  .email-form {
+    flex-direction: column;
+  }
+
+  .email-form input {
+    border-radius: 25px;
+    margin-bottom: 1rem;
+  }
+
+  .email-form button {
+    border-radius: 25px;
+  }
+
+  .footer-content {
+    padding: 0 1rem;
+  }
+
+  .footer-desc {
+    font-size: 0.9rem;
+  }
+
+  .footer-links a {
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-bottom {
+    font-size: 0.8rem;
+    padding: 1rem;
+  }
+}
+
+/* Animaciones para el chatbot */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Scrollbar personalizado */
+.h-80::-webkit-scrollbar {
+  width: 6px;
+}
+
+.h-80::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.h-80::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.h-80::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
