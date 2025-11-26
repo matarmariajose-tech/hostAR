@@ -1,9 +1,8 @@
 export default function Footer() {
     return (
-        <footer className="bg-[#2D3748] text-white py-12 sm:py-16 lg:py-20" id="contacto">
-            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        <footer className="bg-[#2D3748] text-white py-12 sm:py-14 lg:py-18" id="contacto">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-2">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
-                    {/* Columna 1 */}
                     <div className="sm:col-span-2 lg:col-span-1">
                         <div className="text-3xl sm:text-4xl font-black text-white mb-4 sm:mb-6">
                             Host<span className="bg-gradient-to-r from-[#74ACDF] to-[#AED6F1] bg-clip-text text-transparent">AR</span>
@@ -29,7 +28,6 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Enlaces Rápidos */}
                     <div>
                         <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Enlaces Rápidos</h3>
                         <div className="space-y-2 sm:space-y-3">
@@ -49,7 +47,6 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Contacto */}
                     <div>
                         <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Contacto</h3>
                         <div className="space-y-2 sm:space-y-3">
@@ -65,7 +62,6 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Newsletter */}
                     <div>
                         <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Newsletter</h3>
                         <p className="text-[rgba(255,255,255,0.7)] mb-4 text-sm sm:text-base">

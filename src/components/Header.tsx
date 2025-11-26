@@ -31,19 +31,12 @@ export default function Header() {
                     : 'bg-[#2D3748] py-5'
                     }`}
             >
-                <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-4">
                     <div className="flex items-center justify-between">
-                        {/* Logo */}
-                        <a href="/" className="flex items-center space-x-1">
-                            <span className="text-2xl sm:text-3xl font-black text-white">
-                                Host
-                            </span>
-                            <span className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-[#74ACDF] to-[#AED6F1] bg-clip-text text-transparent">
-                                AR
-                            </span>
-                        </a>
+                        <div className="text-2xl font-black text-white">
+                            Host<span className="bg-gradient-to-r from-[#74ACDF] to-[#AED6F1] bg-clip-text text-transparent">AR</span>
+                        </div>
 
-                        {/* Desktop Menu */}
                         <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
                             {menuItems.map((item) => (
                                 <a
@@ -60,7 +53,6 @@ export default function Header() {
                             ))}
                         </div>
 
-                        {/* Mobile Menu Button */}
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition"
@@ -71,7 +63,6 @@ export default function Header() {
                     </div>
                 </div>
 
-                {/* Mobile Menu */}
                 {mobileMenuOpen && (
                     <div className="md:hidden bg-[#2D3748]/95 backdrop-blur-sm border-t border-white/10">
                         <div className="px-4 py-3 space-y-1">
