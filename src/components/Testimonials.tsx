@@ -65,7 +65,6 @@ export default function Testimonials() {
 
     return (
         <section className="testimonials-section" id="testimonios">
-            {/* Header con estadística */}
             <div className="text-center mb-12 max-w-3xl mx-auto px-4">
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 text-[var(--text)]">
                     Lo que dicen nuestros propietarios
@@ -76,7 +75,6 @@ export default function Testimonials() {
             </div>
             
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Card del testimonio */}
                 <div className="relative min-h-[220px] flex items-center justify-center py-6">
                     <div 
                         className={`
@@ -85,7 +83,6 @@ export default function Testimonials() {
                         `}
                     >
                         <div className="bg-gradient-to-br from-white to-[var(--secondary)] p-8 md:p-10 rounded-2xl shadow-lg border border-gray-100 relative">
-                            {/* Estrellitas arriba */}
                             <div className="flex gap-1 mb-4">
                                 {[...Array(5)].map((_, i) => (
                                     <svg key={i} className="w-5 h-5 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
@@ -94,12 +91,10 @@ export default function Testimonials() {
                                 ))}
                             </div>
                             
-                            {/* Testimonial Quote */}
                             <p className="text-base md:text-lg text-[var(--text)] mb-6 leading-relaxed italic">
                                 "{currentTestimonial.quote}"
                             </p>
                             
-                            {/* Author Info */}
                             <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
                                 <div className="w-12 h-12 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dark)] rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg flex-shrink-0">
                                     {currentTestimonial.name.charAt(0)}
@@ -117,7 +112,6 @@ export default function Testimonials() {
                     </div>
                 </div>
 
-                {/* Indicadores de navegación */}
                 <div className="flex justify-center gap-2 mt-6">
                     {testimonials.map((_, index) => (
                         <button
@@ -135,7 +129,6 @@ export default function Testimonials() {
                     ))}
                 </div>
 
-                {/* Rating final */}
                 <div className="text-center mt-10 pt-8 border-t border-gray-200">
                     <div className="flex items-center justify-center gap-2 mb-2">
                         <span className="text-4xl font-bold text-[var(--text)]">4.8</span>
