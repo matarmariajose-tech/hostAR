@@ -6,7 +6,6 @@ import { Menu, X } from 'lucide-react';
 const menuItems = [
     { label: 'Servicios', href: '#servicios' },
     { label: 'Tarifas', href: '#tarifas' },
-    { label: 'Liderazgo', href: '#liderazgo' },
     { label: 'Testimonios', href: '#testimonios' },
     { label: 'Contacto', href: '#contacto' },
 ];

@@ -21,14 +21,15 @@ export default function ChatbotModal() {
     } = useChatbot();
 
     const [isMinimized, setIsMinimized] = useState(false);
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
+    const [hasInteracted, setHasInteracted] = useState(false);
     const chatMessagesRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (chatMessagesRef.current) {
+        if (chatMessagesRef.current && isOpen) {
             chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
         }
-    }, [messages]);
+    }, [messages, isOpen]);
 
     const handleSendMessage = () => {
         if (input.trim()) {
@@ -46,9 +47,15 @@ export default function ChatbotModal() {
     const handleClose = () => {
         resetChat();
         setIsOpen(false);
+        setHasInteracted(true);
     };
 
-    if (!isOpen) {
+    const handleOpen = () => {
+        setIsOpen(true);
+        setHasInteracted(true);
+    };
+
+    if (!isOpen && !hasInteracted) {
         return (
             <div style={{
                 position: 'fixed',
@@ -57,29 +64,34 @@ export default function ChatbotModal() {
                 zIndex: 9999
             }}>
                 <button
-                    onClick={() => setIsOpen(true)}
+                    onClick={handleOpen}
                     style={{
-                        background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                        background: 'linear-gradient(135deg, #74ACDF 0%, #4A90E2 100%)',
                         color: 'white',
                         padding: '16px',
                         borderRadius: '50%',
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-                        border: 'none',
+                        boxShadow: '0 8px 25px rgba(116, 172, 223, 0.4)',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
-                        transform: 'scale(1)'
+                        transform: 'scale(1)',
+                        width: '60px',
+                        height: '60px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                     }}
                     onMouseOver={(e) => {
                         e.currentTarget.style.transform = 'scale(1.1)';
-                        e.currentTarget.style.boxShadow = '0 12px 35px rgba(0,0,0,0.3)';
+                        e.currentTarget.style.boxShadow = '0 12px 35px rgba(116, 172, 223, 0.6)';
                     }}
                     onMouseOut={(e) => {
                         e.currentTarget.style.transform = 'scale(1)';
-                        e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+                        e.currentTarget.style.boxShadow = '0 8px 25px rgba(116, 172, 223, 0.4)';
                     }}
-                    title="Abrir chat"
+                    title="Abrir chat de HostAR"
                 >
-                    <span style={{ fontSize: '20px' }}>💬</span>
+                    <span style={{ fontSize: '24px' }}>💬</span>
                 </button>
             </div>
         );
@@ -95,38 +107,71 @@ export default function ChatbotModal() {
             }}>
                 <div
                     style={{
-                        background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+                        background: '#2C3E50',
                         color: 'white',
-                        padding: '16px',
+                        padding: '14px 18px',
                         borderRadius: '12px',
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+                        boxShadow: '0 8px 25px rgba(0, 0, 0, 0.2)',
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
-                        minWidth: '200px'
+                        minWidth: '220px',
+                        border: '1px solid rgba(255, 255, 255, 0.1)'
                     }}
                     onClick={() => setIsMinimized(false)}
                     onMouseOver={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.3)';
+                        e.currentTarget.style.background = '#34495E';
                     }}
                     onMouseOut={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+                        e.currentTarget.style.background = '#2C3E50';
                     }}
                 >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontWeight: '600', fontSize: '14px' }}>💬 ¿Necesitas ayuda?</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{
+                                width: '32px',
+                                height: '32px',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                <span style={{ fontSize: '16px' }}>💬</span>
+                            </div>
+                            <div>
+                                <div style={{ fontWeight: '600', fontSize: '14px' }}>Chat HostAR</div>
+                                <div style={{ fontSize: '11px', opacity: 0.8, marginTop: '2px' }}>Haz clic para abrir</div>
+                            </div>
+                        </div>
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleClose();
                             }}
                             style={{
-                                background: 'none',
+                                background: 'rgba(255, 255, 255, 0.1)',
                                 border: 'none',
                                 color: 'white',
-                                fontSize: '18px',
+                                fontSize: '16px',
                                 cursor: 'pointer',
-                                padding: '0',
-                                marginLeft: '12px'
+                                padding: '4px 8px',
+                                borderRadius: '4px',
+                                transition: 'background 0.2s ease',
+                                width: '28px',
+                                height: '28px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                            onMouseOver={(e) => {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
                             }}
                         >
                             ×
@@ -145,37 +190,38 @@ export default function ChatbotModal() {
             zIndex: 9999,
             width: '380px',
             background: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+            borderRadius: '12px',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)',
             border: '1px solid #E5E7EB',
-            animation: 'fadeInUp 0.3s ease-out'
+            overflow: 'hidden',
+            animation: isOpen ? 'fadeInUp 0.3s ease-out' : 'none'
         }}>
             <div style={{
-                background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+                background: '#2C3E50',
                 color: 'white',
-                padding: '20px',
-                borderTopLeftRadius: '16px',
-                borderTopRightRadius: '16px',
+                padding: '16px 20px',
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{
                         width: '36px',
                         height: '36px',
-                        background: 'white',
+                        background: 'rgba(255, 255, 255, 0.1)',
                         borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        border: '1px solid rgba(255, 255, 255, 0.2)'
                     }}>
-                        <span style={{ color: '#3B82F6', fontSize: '16px' }}>💬</span>
+                        <span style={{ fontSize: '18px' }}>💬</span>
                     </div>
                     <div>
                         <h3 style={{
                             margin: 0,
-                            fontSize: '16px',
+                            fontSize: '15px',
                             fontWeight: '600',
                             lineHeight: '1.2'
                         }}>
@@ -183,7 +229,7 @@ export default function ChatbotModal() {
                         </h3>
                         <p style={{
                             margin: 0,
-                            fontSize: '12px',
+                            fontSize: '11px',
                             opacity: 0.8,
                             lineHeight: '1.2',
                             marginTop: '2px'
@@ -192,25 +238,30 @@ export default function ChatbotModal() {
                         </p>
                     </div>
                 </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '6px' }}>
                     <button
                         onClick={() => setIsMinimized(true)}
                         style={{
-                            background: 'none',
+                            background: 'rgba(255, 255, 255, 0.1)',
                             border: 'none',
                             color: 'white',
-                            fontSize: '18px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             cursor: 'pointer',
-                            padding: '4px 8px',
-                            borderRadius: '4px',
-                            transition: 'background 0.2s ease'
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            transition: 'background 0.2s ease',
+                            minWidth: '32px',
+                            height: '32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
                         }}
                         onMouseOver={(e) => {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
                         }}
                         onMouseOut={(e) => {
-                            e.currentTarget.style.background = 'none';
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
                         }}
                         title="Minimizar"
                     >
@@ -219,21 +270,26 @@ export default function ChatbotModal() {
                     <button
                         onClick={handleClose}
                         style={{
-                            background: 'none',
+                            background: 'rgba(255, 255, 255, 0.1)',
                             border: 'none',
                             color: 'white',
-                            fontSize: '18px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             cursor: 'pointer',
-                            padding: '4px 8px',
-                            borderRadius: '4px',
-                            transition: 'background 0.2s ease'
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            transition: 'background 0.2s ease',
+                            minWidth: '32px',
+                            height: '32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
                         }}
                         onMouseOver={(e) => {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
                         }}
                         onMouseOut={(e) => {
-                            e.currentTarget.style.background = 'none';
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
                         }}
                         title="Cerrar"
                     >
@@ -263,15 +319,14 @@ export default function ChatbotModal() {
                             style={{
                                 display: 'inline-block',
                                 padding: '12px 16px',
-                                borderRadius: '18px',
                                 maxWidth: '85%',
                                 background: msg.startsWith("Tú:")
-                                    ? 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)'
+                                    ? '#2C3E50'
                                     : 'white',
-                                color: msg.startsWith("Tú:") ? 'white' : '#374151',
+                                color: msg.startsWith("Tú:") ? 'white' : '#1F2937',
                                 border: msg.startsWith("Tú:") ? 'none' : '1px solid #E5E7EB',
                                 borderRadius: msg.startsWith("Tú:") ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                                boxShadow: msg.startsWith("Tú:") ? '0 2px 8px rgba(59, 130, 246, 0.3)' : '0 2px 8px rgba(0,0,0,0.05)'
+                                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
                             }}
                         >
                             <p style={{
@@ -307,11 +362,12 @@ export default function ChatbotModal() {
                                 borderRadius: '8px',
                                 fontSize: '14px',
                                 outline: 'none',
-                                transition: 'all 0.2s ease'
+                                transition: 'all 0.2s ease',
+                                background: '#F9FAFB'
                             }}
                             onFocus={(e) => {
-                                e.target.style.borderColor = '#3B82F6';
-                                e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                                e.target.style.borderColor = '#2C3E50';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(44, 62, 80, 0.1)';
                             }}
                             onBlur={(e) => {
                                 e.target.style.borderColor = '#D1D5DB';
@@ -333,11 +389,12 @@ export default function ChatbotModal() {
                                 borderRadius: '8px',
                                 fontSize: '14px',
                                 outline: 'none',
-                                transition: 'all 0.2s ease'
+                                transition: 'all 0.2s ease',
+                                background: '#F9FAFB'
                             }}
                             onFocus={(e) => {
-                                e.target.style.borderColor = '#3B82F6';
-                                e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                                e.target.style.borderColor = '#2C3E50';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(44, 62, 80, 0.1)';
                             }}
                             onBlur={(e) => {
                                 e.target.style.borderColor = '#D1D5DB';
@@ -361,11 +418,12 @@ export default function ChatbotModal() {
                                 outline: 'none',
                                 resize: 'none',
                                 transition: 'all 0.2s ease',
-                                fontFamily: 'inherit'
+                                fontFamily: 'inherit',
+                                background: '#F9FAFB'
                             }}
                             onFocus={(e) => {
-                                e.target.style.borderColor = '#3B82F6';
-                                e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                                e.target.style.borderColor = '#2C3E50';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(44, 62, 80, 0.1)';
                             }}
                             onBlur={(e) => {
                                 e.target.style.borderColor = '#D1D5DB';
@@ -380,7 +438,7 @@ export default function ChatbotModal() {
                                 disabled={isSubmitting}
                                 style={{
                                     flex: 1,
-                                    background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+                                    background: '#2C3E50',
                                     color: 'white',
                                     padding: '12px 16px',
                                     border: 'none',
@@ -393,12 +451,12 @@ export default function ChatbotModal() {
                                 }}
                                 onMouseOver={(e) => {
                                     if (!isSubmitting) {
-                                        e.currentTarget.style.background = 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)';
+                                        e.currentTarget.style.background = '#34495E';
                                     }
                                 }}
                                 onMouseOut={(e) => {
                                     if (!isSubmitting) {
-                                        e.currentTarget.style.background = 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)';
+                                        e.currentTarget.style.background = '#2C3E50';
                                     }
                                 }}
                             >
@@ -505,11 +563,12 @@ export default function ChatbotModal() {
                                 borderRadius: '8px',
                                 fontSize: '14px',
                                 outline: 'none',
-                                transition: 'all 0.2s ease'
+                                transition: 'all 0.2s ease',
+                                background: '#F9FAFB'
                             }}
                             onFocus={(e) => {
-                                e.target.style.borderColor = '#3B82F6';
-                                e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                                e.target.style.borderColor = '#2C3E50';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(44, 62, 80, 0.1)';
                             }}
                             onBlur={(e) => {
                                 e.target.style.borderColor = '#D1D5DB';
@@ -520,28 +579,32 @@ export default function ChatbotModal() {
                             onClick={handleSendMessage}
                             disabled={!input.trim()}
                             style={{
-                                background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+                                background: '#2C3E50',
                                 color: 'white',
                                 padding: '12px 16px',
                                 border: 'none',
                                 borderRadius: '8px',
                                 cursor: !input.trim() ? 'not-allowed' : 'pointer',
                                 opacity: !input.trim() ? 0.5 : 1,
-                                transition: 'all 0.2s ease'
+                                transition: 'all 0.2s ease',
+                                minWidth: '44px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
                             }}
                             onMouseOver={(e) => {
                                 if (input.trim()) {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)';
+                                    e.currentTarget.style.background = '#34495E';
                                 }
                             }}
                             onMouseOut={(e) => {
                                 if (input.trim()) {
-                                    e.currentTarget.style.background = 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)';
+                                    e.currentTarget.style.background = '#2C3E50';
                                 }
                             }}
                         >
-                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                             </svg>
                         </button>
                     </div>
@@ -550,7 +613,7 @@ export default function ChatbotModal() {
                         onClick={activateForm}
                         style={{
                             width: '100%',
-                            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                            background: '#2C3E50',
                             color: 'white',
                             padding: '12px 16px',
                             border: 'none',
@@ -565,10 +628,10 @@ export default function ChatbotModal() {
                             gap: '8px'
                         }}
                         onMouseOver={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, #059669 0%, #047857 100%)';
+                            e.currentTarget.style.background = '#34495E';
                         }}
                         onMouseOut={(e) => {
-                            e.currentTarget.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
+                            e.currentTarget.style.background = '#2C3E50';
                         }}
                     >
                         <span>Solicitar Contacto Personalizado</span>
