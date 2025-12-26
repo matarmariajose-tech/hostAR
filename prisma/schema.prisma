@@ -1,36 +1,317 @@
-generator client {
-  provider = "prisma-client-js"
+// ============================================
+// MODELOS PARA PROPERTY MANAGEMENT
+// ============================================
+
+model PropertyManagement {
+  id                String              @id @default(uuid())
+  propertyId        String              @unique
+  property          Property            @relation(fields: [propertyId], references: [id])
+  
+  // Contrato con el propietario
+  commissionRate    Float               // 12% o 20%
+  managementTier    ManagementTier      @default(ESSENTIAL)
+  contractStartDate DateTime
+  contractEndDate   DateTime?
+  isActive          Boolean             @default(true)
+  
+  // Configuración de pricing
+  minPrice          Float
+  maxPrice          Float
+  basePriceStrategy String              @default("DYNAMIC") // FIXED, DYNAMIC, ML
+  lastPriceUpdate   DateTime?
+  
+  // Métricas operativas
+  totalRevenue      Float               @default(0)
+  occupancyRate     Float               @default(0)
+  averageNightlyRate Float              @default(0)
+  
+  // Integraciones externas
+  airbnbListingId   String?
+  bookingListingId  String?
+  
+  pricingHistory    PricingHistory[]
+  cleaningTasks     CleaningTask[]
+  maintenanceTasks  MaintenanceTask[]
+  aiInsights        AIInsight[]
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@index([propertyId])
+  @@index([isActive])
+  @@map("property_management")
 }
 
-datasource db {
-  provider = "postgresql" // or "mysql", "sqlite", etc.
-  url      = env("DATABASE_URL")
+// Historial de precios para ML
+model PricingHistory {
+  id                    String              @id @default(uuid())
+  propertyManagementId  String
+  propertyManagement    PropertyManagement  @relation(fields: [propertyManagementId], references: [id])
+  
+  date                  DateTime
+  suggestedPrice        Float               // Lo que sugirió la IA
+  appliedPrice          Float               // Lo que realmente se cobró
+  occupancyRate         Float?
+  bookingsCount         Int                 @default(0)
+  revenue               Float               @default(0)
+  
+  // Contexto para ML
+  dayOfWeek             Int
+  isWeekend             Boolean
+  isHoliday             Boolean
+  localEvents           Json?               // Eventos en la zona ese día
+  weatherCondition      String?
+  dolarBlueRate         Float?
+  inflationRate         Float?
+  competitorAvgPrice    Float?
+  
+  createdAt             DateTime            @default(now())
+  
+  @@index([propertyManagementId, date])
+  @@index([date])
+  @@map("pricing_history")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  bookings  Booking[]
-  createdAt DateTime @default(now())
+// Tareas de limpieza
+model CleaningTask {
+  id                    String              @id @default(uuid())
+  propertyManagementId  String
+  propertyManagement    PropertyManagement  @relation(fields: [propertyManagementId], references: [id])
+  bookingId             String?
+  booking               Booking?            @relation(fields: [bookingId], references: [id])
+  
+  scheduledDate         DateTime
+  scheduledTime         String              // "14:00"
+  duration              Int                 @default(120) // minutos
+  status                TaskStatus          @default(PENDING)
+  
+  // Proveedor asignado
+  cleanerId             String?
+  cleaner               ServiceProvider?    @relation(fields: [cleanerId], references: [id])
+  
+  // Verificación con IA
+  verificationPhotos    String[]            // URLs de fotos
+  aiQualityScore        Float?              // 0-100
+  aiIssuesDetected      Json?               // Lista de problemas detectados
+  verifiedAt            DateTime?
+  
+  // Feedback manual
+  manualReview          String?             @db.Text
+  guestComplaint        String?             @db.Text
+  
+  completedAt           DateTime?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  
+  @@index([propertyManagementId])
+  @@index([scheduledDate])
+  @@index([status])
+  @@map("cleaning_tasks")
 }
 
-model Property {
-  id        String   @id @default(uuid())
-  name      String
-  bookings  Booking[]
-  createdAt DateTime @default(now())
+// Mantenimiento
+model MaintenanceTask {
+  id                    String              @id @default(uuid())
+  propertyManagementId  String
+  propertyManagement    PropertyManagement  @relation(fields: [propertyManagementId], references: [id])
+  
+  title                 String
+  description           String              @db.Text
+  priority              Priority            @default(MEDIUM)
+  category              MaintenanceCategory
+  status                TaskStatus          @default(PENDING)
+  
+  // Asignación
+  providerId            String?
+  provider              ServiceProvider?    @relation(fields: [providerId], references: [id])
+  
+  estimatedCost         Float?
+  actualCost            Float?
+  scheduledDate         DateTime?
+  completedDate         DateTime?
+  
+  photos                String[]
+  notes                 String?             @db.Text
+  
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  
+  @@index([propertyManagementId])
+  @@index([status])
+  @@index([priority])
+  @@map("maintenance_tasks")
 }
 
-model Booking {
-  id         String   @id @default(uuid())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  propertyId String
-  property   Property @relation(fields: [propertyId], references: [id])
-  checkIn    DateTime
-  checkOut   DateTime
-  totalPrice Float
-  status     String   @default("pending")
-  createdAt  DateTime @default(now())
+// Proveedores (limpieza, mantenimiento, etc)
+model ServiceProvider {
+  id                String              @id @default(uuid())
+  name              String
+  email             String              @unique
+  phone             String
+  type              ProviderType
+  rating            Float               @default(5.0)
+  completedTasks    Int                 @default(0)
+  
+  // Performance tracking
+  avgResponseTime   Int?                // minutos
+  cancellationRate  Float               @default(0)
+  onTimeRate        Float               @default(100)
+  
+  isActive          Boolean             @default(true)
+  zones             String[]            // Zonas donde trabaja
+  
+  cleaningTasks     CleaningTask[]
+  maintenanceTasks  MaintenanceTask[]
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@index([type])
+  @@index([isActive])
+  @@map("service_providers")
+}
+
+// Conversaciones del chatbot con huéspedes
+model ChatConversation {
+  id                String              @id @default(uuid())
+  bookingId         String
+  booking           Booking             @relation(fields: [bookingId], references: [id])
+  
+  platform          ChatPlatform        @default(WHATSAPP)
+  phoneNumber       String
+  guestName         String?
+  
+  isActive          Boolean             @default(true)
+  needsHumanEscalation Boolean          @default(false)
+  escalatedAt       DateTime?
+  resolvedAt        DateTime?
+  
+  messages          ChatMessage[]
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@index([bookingId])
+  @@index([isActive])
+  @@map("chat_conversations")
+}
+
+model ChatMessage {
+  id                String              @id @default(uuid())
+  conversationId    String
+  conversation      ChatConversation    @relation(fields: [conversationId], references: [id])
+  
+  role              MessageRole
+  content           String              @db.Text
+  
+  // Metadata
+  sentiment         String?             // positive, neutral, negative
+  intent            String?             // check_in_info, complaint, question, etc
+  wasAutomatic      Boolean             @default(true)
+  
+  createdAt         DateTime            @default(now())
+  
+  @@index([conversationId])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+// Insights generados por IA
+model AIInsight {
+  id                    String              @id @default(uuid())
+  propertyManagementId  String
+  propertyManagement    PropertyManagement  @relation(fields: [propertyManagementId], references: [id])
+  
+  type                  InsightType
+  title                 String
+  description           String              @db.Text
+  actionable            Boolean             @default(true)
+  priority              Priority            @default(MEDIUM)
+  
+  // Data que sustenta el insight
+  metrics               Json
+  
+  // Tracking
+  wasViewed             Boolean             @default(false)
+  wasActedUpon          Boolean             @default(false)
+  wasHelpful            Boolean?
+  feedback              String?             @db.Text
+  
+  createdAt             DateTime            @default(now())
+  expiresAt             DateTime?           // Algunos insights son time-sensitive
+  
+  @@index([propertyManagementId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("ai_insights")
+}
+
+// ============================================
+// ENUMS ADICIONALES
+// ============================================
+
+enum ManagementTier {
+  ESSENTIAL    // 12%
+  PREMIUM      // 20%
+}
+
+enum TaskStatus {
+  PENDING
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  FAILED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum MaintenanceCategory {
+  PLUMBING
+  ELECTRICAL
+  APPLIANCE
+  HVAC
+  CLEANING
+  PAINTING
+  FURNITURE
+  OTHER
+}
+
+enum ProviderType {
+  CLEANING
+  PLUMBER
+  ELECTRICIAN
+  HANDYMAN
+  HVAC
+  OTHER
+}
+
+enum ChatPlatform {
+  WHATSAPP
+  SMS
+  EMAIL
+  WEB
+}
+
+enum MessageRole {
+  USER        // Huésped
+  ASSISTANT   // IA
+  SYSTEM      // Notificaciones automáticas
+  HUMAN       // Staff humano
+}
+
+enum InsightType {
+  PRICING_OPPORTUNITY      // "Podés subir el precio 15%"
+  OCCUPANCY_WARNING        // "Baja ocupación vs competencia"
+  MAINTENANCE_NEEDED       // "Patrón de quejas sobre WiFi"
+  REVIEW_TREND            // "Últimas 3 reviews mencionan limpieza"
+  REVENUE_FORECAST        // "Proyección próximo mes"
+  COMPETITOR_ANALYSIS     // "Tu competencia bajó precios"
+  BOOKING_PATTERN         // "Mayoría reservas con 2 semanas anticipación"
+  SEASONAL_ADVICE         // "Histórico: Julio tiene pico de demanda"
 }
