@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     const query = req.nextUrl.searchParams.get("q");
     
-    console.log("🔍 Buscando:", query); // Para debug
+    console.log("Buscando:", query); // Para debug
     
     if (!query) {
         return NextResponse.json([], { status: 200 });
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     try {
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=ar&addressdetails=1&limit=5`;
         
-        console.log("🌐 Fetching:", url); // Para debug
+        console.log("Fetching:", url); // Para debug
         
         const response = await fetch(url, {
             headers: {
@@ -21,18 +21,18 @@ export async function GET(req: NextRequest) {
             },
         });
 
-        console.log("📡 Response status:", response.status); // Para debug
+        console.log("Response status:", response.status); // Para debug
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log("✅ Datos recibidos:", data.length, "resultados"); // Para debug
+        console.log("Datos recibidos:", data.length, "resultados"); // Para debug
         
         return NextResponse.json(data);
     } catch (err) {
-        console.error("❌ Error en API route:", err);
+        console.error("Error en API route:", err);
         return NextResponse.json([], { status: 200 }); // Retorna array vacío en lugar de error
     }
 }
